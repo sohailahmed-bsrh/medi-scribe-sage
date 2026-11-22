@@ -12,7 +12,7 @@
 
 Physicians spend up to 40% of their workday drafting electronic health records, reducing direct patient care time and increasing burnout.
 
-This project provides an end-to-end, reproducible implementation engineered to solve this challenge through verified data transformations, robust algorithms, and production-ready architecture.
+This project provides an end-to-end, reproducible implementation engineered to solve this challenge through verified data transformations, reliable algorithms, and production-ready architecture.
 
 ---
 
