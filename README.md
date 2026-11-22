@@ -1,122 +1,136 @@
-# MediScribe Sage Clinical SOAP Documentation Engine
+# Medi-Scribe-Sage - Clinical EHR Transcription & Grounded RAG Platform
 
-> AI-assisted clinical transcription system structuring patient consultations into standardized medical records.
-
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=flat-square&logo=github)](https://github.com/sohailahmed-bsrh/medi-scribe-sage)
-[![Live Showcase](https://img.shields.io/badge/Live-Showcase-0A66C2?style=flat-square&logo=googlechrome)](https://sohail.devsil.com/projects.html)
-[![Author](https://img.shields.io/badge/Author-Sohail%20Ahmed-20BEFF?style=flat-square)](https://sohail.devsil.com)
-
----
-
-## Overview
-
-Physicians spend up to 40% of their workday drafting electronic health records, reducing direct patient care time and increasing burnout.
-
-This project provides an end-to-end, reproducible implementation engineered to solve this challenge through verified data transformations, reliable algorithms, and production-ready architecture.
+<p align="center">
+  <a href="https://sohail.devsil.com"><strong>Portfolio</strong></a> | 
+  <a href="https://github.com/sohailahmed-bsrh"><strong>GitHub Profile</strong></a> | 
+  <a href="https://github.com/sohailahmed-bsrh/medi-scribe-sage"><strong>Source Repository</strong></a>
+</p>
 
 ---
 
-## Key Features
+## Executive Summary & Problem Statement
 
-- Consultation audio parsing and speaker-differentiated transcription
-- Automated clinical entity extraction following standard SOAP (Subjective, Objective, Assessment, Plan) format
-- RAG-assisted medical terminology cross-referencing and verification
-- Secure web interface with Drizzle ORM schema and Supabase integration
+Physicians spend up to two hours documenting medical records for every hour of direct patient care. This administrative burden causes physician burnout and delays electronic health record (EHR) updates. Furthermore, automated clinical summarizers often introduce hallucinations, presenting unacceptable risks in healthcare environments.
+
+Medi-Scribe-Sage resolves this documentation dilemma. Combining clinical speech processing, strict medical ontology chunking (ICD-10 / SNOMED-CT references), and a grounded RAG retrieval pipeline, the platform transforms doctor-patient dialogue into structured, audit-ready SOAP notes (Subjective, Objective, Assessment, Plan) backed by verified medical knowledge retrieval.
 
 ---
 
-## System Architecture
+## Real-World Industry Applications
 
-```mermaid
-flowchart LR
-    Audio[Consultation Audio] --> Transcribe[Speech Recognition Engine]
-    Transcribe --> CleanText[Diarized Transcript]
-    CleanText --> SOAPGen[Clinical Entity Extraction & SOAP Formatting]
-    SOAPGen --> Verify[Medical Cross-Reference Pipeline]
-    Verify --> EHR[Standardized Clinical Health Record]
+- **Inpatient & Outpatient Consultation**: Translates real-time patient-physician conversations into formatted clinical SOAP notes.
+- **Clinical EHR Integration**: Ingests clinical notes directly into relational hospital schemas using Drizzle ORM and Supabase PostgreSQL.
+- **Medical Audit & Compliance**: Provides exact source citations for clinical assertions, allowing healthcare administrators to audit documentation trails.
+- **Clinical Decision Support**: Enables semantic querying over institutional clinical guidelines and pharmacological databases.
+
+---
+
+## Technical Architecture & Engineering Walkthrough
+
+The platform integrates a Python-based clinical RAG pipeline with a modern Bun and TypeScript clinical workstation:
+
+```
+[Clinical Audio / Consultation Record]
+                  │
+                  ▼
+   [Clinical Audio Diarization & Ingestion]
+                  │
+                  ▼
+ [Domain-Specific Medical Chunking & Cleaning]
+(rag_pipeline/src/chunker.py & cleaner.py)
+                  │
+                  ▼
+   [High-Dimensional Vector Embeddings]
+        (rag_pipeline/src/embedder.py)
+                  │
+                  ▼
+     [Vector Similarity Search & Index]
+                  │
+                  ▼
+[Grounded Clinical SOAP Synthesis & Validation]
+  (Subjective, Objective, Assessment, Plan)
+                  │
+                  ▼
+[Drizzle ORM Relational Storage & Supabase Auth]
+(drizzle/schema.ts & migrations/0000_migration.sql)
+                  │
+                  ▼
+   [Interactive Clinical Workstation Dashboard]
 ```
 
----
+### Step 1: Medical Document Cleaning & Extraction
+The ingestion engine (`rag_pipeline/src/reader.py`, `extractor.py`, `cleaner.py`) strips clinical formatting artifacts, anonymizes protected patient identifiers, and extracts consultation dialogue.
 
-## Technology Stack
+### Step 2: Semantic Clinical Chunking
+Unlike generic prose, clinical records contain dense medical terminology and hierarchical relationships. The chunker (`rag_pipeline/src/chunker.py`) isolates clinical observations, vital signs, symptom timelines, and medication regimens into structured segments.
 
-| Technology | Version / Spec | Role in Architecture |
-| :--- | :--- | :--- |
-| **Python & FastAPI** | `3.10+` | RAG verification pipeline and clinical parsing |
-| **React & Vite** | `18.2+` | Modern clinical consultation interface |
-| **Drizzle ORM** | `0.28+` | Database schema management and migrations |
-| **Tailwind CSS** | `3.3+` | Responsive UI styling |
+### Step 3: Vector Embeddings & Search
+The embedder (`rag_pipeline/src/embedder.py`) maps clinical terminology into semantic vector space. The search module (`rag_pipeline/src/search.py`) queries indexed clinical references to match patient symptom profiles against standardized diagnostic criteria.
 
----
+### Step 4: SOAP Note Synthesis
+The synthesis engine structures dialogue into standardized healthcare reporting:
+- **Subjective**: Patient history, symptoms, and timeline.
+- **Objective**: Vital statistics, lab reports, and physical examination findings.
+- **Assessment**: Primary and differential diagnostic evaluations.
+- **Plan**: Prescriptions, lab orders, therapies, and follow-up schedules.
 
-## Repository Structure
-
-```text
-medi-scribe-sage/
-|-- rag_pipeline/
-|   |-- run.py
-|   `-- search.py
-|-- src/
-|-- drizzle/
-|-- .env.example
-|-- .gitignore
-|-- package.json
-`-- README.md
-```
+### Step 5: Database Schema & Authentication
+Data persistence is handled by Drizzle ORM (`drizzle/schema.ts`, `drizzle.config.ts`), managing migrations, relational patient-encounter schemas, and audit logs. Supabase Auth ensures role-based access control (RBAC) across clinical roles.
 
 ---
 
-## Installation and Execution
+## Technology Stack & Implementation Specifications
 
-### Prerequisites
-- Node.js 18+ / Python 3.10+
-- Git version control
+| Component | Technology | Version | Architectural Function |
+| :--- | :--- | :--- | :--- |
+| **Runtime Environment** | Bun Runtime | Latest | High-performance JavaScript execution and package manager |
+| **Backend / Client** | TypeScript / Vite / React | Production | Reactive clinical workstation frontend |
+| **ORM & Database** | Drizzle ORM / PostgreSQL | 0.30+ | Type-safe schema definitions and migration tracking |
+| **Authentication** | Supabase Auth | Latest | Secure role-based access control for medical staff |
+| **Clinical RAG Engine** | Python | 3.10+ | Text extraction, semantic chunking, and embedding generation |
+| **Vector Indexing** | Scikit-Learn / FAISS | Latest | Fast similarity matching across clinical protocols |
+| **Testing Suite** | Vitest | Latest | Automated unit and integration testing across frontend modules |
 
-### Setup Instructions
-1. Clone the repository:
+---
+
+## Installation & Setup Guide
+
+### 1. Clinical RAG Pipeline
 ```bash
-git clone https://github.com/sohailahmed-bsrh/medi-scribe-sage.git
-cd medi-scribe-sage
+cd rag_pipeline
+python -m venv venv
+# Windows: venv\Scriptsctivate | Unix: source venv/bin/activate
+pip install -r ../requirements.txt
+python run.py
 ```
 
-2. Configure environment and dependencies:
+### 2. Workstation Client & Database Setup
 ```bash
-npm install
-cp .env.example .env
-npm run dev
+# In the repository root:
+bun install
+bun run db:push     # Run Drizzle migrations
+bun run dev         # Launch development server
 ```
-
----
-
-## Interface and Verification
-The system produces verifiable execution logs, prediction matrices, or interactive browser interfaces depending on the target mode. Verify operation by executing the commands specified above or inspecting the demonstration notebooks.
-
----
-
-## Author and Contact
-Developed by **Sohail Ahmed** — Full Stack AI Engineer & Machine Learning Specialist.
-- **Portfolio:** [sohail.devsil.com](https://sohail.devsil.com)
-- **GitHub:** [@sohailahmed-bsrh](https://github.com/sohailahmed-bsrh)
-- **Email:** [sohail.bsrh@gmail.com](mailto:sohail.bsrh@gmail.com)
 
 ---
 
 ## Author & Contact Information
 
-<table width="100%" align="center">
+<table width="100%">
   <tr>
-    <td align="center" style="padding: 20px;">
+    <td width="150" align="center" valign="middle">
+      <img src="https://avatars.githubusercontent.com/u/231165170?v=4" width="120" style="border-radius: 50%;" alt="Sohail Ahmed"/>
+    </td>
+    <td>
       <h3>Sohail Ahmed</h3>
-      <p><strong>Full-Stack Artificial Intelligence & Computer Vision Engineer</strong></p>
+      <p><strong>Senior Software Engineer & AI Systems Architect</strong></p>
+      <p>Specializing in Full-Stack AI Application Development, Computer Vision, Deep Learning Pipelines, and Scalable Automation Architectures.</p>
       <p>
-        <a href="https://sohail.devsil.com"><img src="https://img.shields.io/badge/Live_Portfolio-sohail.devsil.com-0052FF?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Portfolio"/></a>
-        <a href="https://github.com/sohailahmed-bsrh"><img src="https://img.shields.io/badge/GitHub-Profile-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/></a>
-        <a href="https://linkedin.com/in/sohail-ahmed-dev"><img src="https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/></a>
-        <a href="mailto:sohail.bsrh@gmail.com"><img src="https://img.shields.io/badge/Email-Contact_Me-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/></a>
+        <a href="https://sohail.devsil.com"><strong>Portfolio Website</strong></a> | 
+        <a href="https://github.com/sohailahmed-bsrh"><strong>GitHub Profile</strong></a> | 
+        <a href="https://www.linkedin.com/in/sohail-ahmed-546314316/"><strong>LinkedIn</strong></a> | 
+        <a href="mailto:se906403@gmail.com"><strong>Email Contact</strong></a>
       </p>
-      <p><em>Available for technical roles in Artificial Intelligence, Computer Vision, and Full-Stack Engineering.</em></p>
-      <hr style="border: 0; height: 1px; background: #30363d; margin: 15px 0;">
-      <small>Distributed under the MIT License.</small>
     </td>
   </tr>
 </table>
